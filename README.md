@@ -1,7 +1,7 @@
 ## Sobre
 <p>Lê e escreve dados binários.</p>
 
-## Exemplo:
+## Exemplos:
 Escrevendo:
 ```
 buffer_writer = Buffer_Writer.new
