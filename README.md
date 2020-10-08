@@ -1,4 +1,5 @@
 ## Sobre
+![lANG](https://img.shields.io/badge/LANG-RUBY(%20RGSS%20)-red?style=for-the-badge&logo=appveyo)
 <p>Lê e escreve dados binários.</p>
 
 ## Exemplos:
