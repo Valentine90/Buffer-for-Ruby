@@ -2,7 +2,7 @@
 ![lANG](https://img.shields.io/badge/LANG-RUBY(%20RGSS%20)-red?style=for-the-badge&logo=appveyo)
 <p>Reads and writes binary data.</p>
 
-## Examples:
+## Examples
 Writing:
 ```
 buffer_writer = Buffer_Writer.new
