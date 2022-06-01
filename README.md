@@ -1,6 +1,5 @@
 ## About
-![lANG](https://img.shields.io/badge/LANG-RUBY-red?style=for-the-badge&logo=appveyo)
-<p>Reads and writes binary data.</p>
+Reads and writes binary data.
 
 ## Examples
 Writing:
