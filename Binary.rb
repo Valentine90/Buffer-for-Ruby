@@ -1,15 +1,15 @@
 #==============================================================================
-# ** Buffer
+# ** Binary
 #------------------------------------------------------------------------------
 #  Esta classe lê e escreve dados binários.
 #------------------------------------------------------------------------------
 #  Autor: Valentine
 #==============================================================================
 
-class Buffer_Writer
+class Binary_Writer
   
   def initialize
-    @buffer = []
+    @binary = []
     @pack = ''
   end
   
@@ -49,25 +49,25 @@ class Buffer_Writer
   end
   
   def to_s
-    @buffer.pack(@pack)
+    @binary.pack(@pack)
   end
   
   private
   
   def write(value, format)
-    @buffer << value
+    @binary << value
     @pack << format
   end
   
 end
 
 #==============================================================================
-# ** Buffer_Reader
+# ** Binary_Reader
 #==============================================================================
-class Buffer_Reader
+class Binary_Reader
   
-  def initialize(str)
-    @bytes = str.bytes
+  def initialize(binary)
+    @bytes = binary.is_a?(Binary_Writer) ? binary.to_s.bytes : binary.bytes
   end
   
   def read_byte
