@@ -12,6 +12,6 @@ binary_writer.write_byte(1)
 Reading:
 ```Ruby
 binary_reader = Binary_Reader.new(binary_writer)
-text = binary_reader.read_string
-number = binary_reader.read_byte
+text = binary_reader.read_string #=> 'text'
+number = binary_reader.read_byte #=> 1
 ```
