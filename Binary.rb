@@ -64,30 +64,30 @@ class Binary_Writer < Binary
              else; TYPE[:long]
              end
     push(value, format)
-    @formats << format
+    @formats << format unless manual_types?
   end
 
   def write_float(value)
     push(value, TYPE[:float])
-    @formats << TYPE[:float]
+    @formats << TYPE[:float] unless manual_types?
   end
   
   def write_boolean(value)
     push(value ? 1 : 0, TYPE[:byte])
-    @formats << TYPE[:boolean]
+    @formats << TYPE[:boolean] unless manual_types?
   end
   
   def write_string(str)
     push(str.bytesize, TYPE[:short])
     str.each_byte { |c| push(c, TYPE[:byte]) }
-    @formats << TYPE[:string]
+    @formats << TYPE[:string] unless manual_types?
   end
 
   def write_time(time)
     push(time.year, TYPE[:short])
     push(time.month, TYPE[:byte])
     push(time.day, TYPE[:byte])
-    @formats << TYPE[:time]
+    @formats << TYPE[:time] unless manual_types?
   end
 
   def manual_types?
