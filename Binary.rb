@@ -31,8 +31,8 @@ class Binary_Writer < Binary
 
   def initialize(manual_types = false)
     @manual_types = manual_types
+    @formats = '' unless manual_types?
     @binary = []
-    @formats = ''
     @pack = ''
   end
 
