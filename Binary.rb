@@ -19,7 +19,7 @@ class Binary
     # Tipos não-oficiais
     :boolean => 'b',
     :string => 'r',
-    :time => 't'
+    :date => 't'
   }
   
 end
@@ -42,7 +42,7 @@ class Binary_Writer < Binary
     when String; write_string(data)
     when Integer; write_int(data, type)
     when Float; write_float(data)
-    when Time; write_time(data)
+    when Time; write_date(data)
     else; write_boolean(data)
     end
   end
@@ -58,45 +58,49 @@ class Binary_Writer < Binary
   private
 
   def write_int(value, type)
-    format = if value >= 0 && value <= 255 || type == :byte; TYPE[:byte]
-             elsif value >= -32_767 && value <= 32_767 || type == :short; TYPE[:short]
-             elsif value >= -2_147_483_647 && value <= 2_147_483_647 || type == :int; TYPE[:int]
-             else; TYPE[:long]
-             end
-    push(value, format)
-    @formats << format unless manual_types?
+    type = type.is_a?(Symbol) ? type : auto_int_type(value)
+    push(value, type)
+    @formats << TYPE[type] unless manual_types?
+  end
+  
+  def auto_int_type(value)
+    if value >= 0 && value <= 255; :byte
+    elsif value >= -32_767 && value <= 32_767; :short
+    elsif value >= -2_147_483_647 && value <= 2_147_483_647; :int
+    else; :long
+    end
   end
 
   def write_float(value)
-    push(value, TYPE[:float])
+    push(value, :float)
     @formats << TYPE[:float] unless manual_types?
   end
   
   def write_boolean(value)
-    push(value ? 1 : 0, TYPE[:byte])
+    push(value ? 1 : 0, :byte)
     @formats << TYPE[:boolean] unless manual_types?
   end
   
   def write_string(str)
-    push(str.bytesize, TYPE[:short])
-    str.each_byte { |c| push(c, TYPE[:byte]) }
+    push(str.bytesize, :short)
+    str.each_byte { |c| push(c, :byte) }
     @formats << TYPE[:string] unless manual_types?
   end
 
-  def write_time(time)
-    push(time.year, TYPE[:short])
-    push(time.month, TYPE[:byte])
-    push(time.day, TYPE[:byte])
-    @formats << TYPE[:time] unless manual_types?
+  def write_date(time)
+    push(time.year, :short)
+    push(time.month, :byte)
+    push(time.day, :byte)
+    @formats << TYPE[:date] unless manual_types?
   end
 
   def manual_types?
     @manual_types
   end
   
-  def push(value, format)
+  def push(value, type)
     @binary << value
-    @pack << format
+    @pack << TYPE[type]
   end
   
 end
@@ -122,7 +126,7 @@ class Binary_Reader < Binary
            when TYPE[:int], :int; shift(4, TYPE[:int])
            when TYPE[:long], :long; shift(8, TYPE[:long])
            when TYPE[:string], :string; read_string
-           when TYPE[:time], :time; read_time
+           when TYPE[:date], :date; read_date
            end
     @index += 1
     data
@@ -147,7 +151,7 @@ class Binary_Reader < Binary
     shift(size, "A#{size}")
   end
   
-  def read_time
+  def read_date
     Time.new(read_short, read_byte, read_byte)
   end
 
