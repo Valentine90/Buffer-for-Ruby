@@ -29,7 +29,7 @@ Or:
 ```Ruby
 manual_types = true
 binary_reader = Binary_Reader.new(binary_writer, manual_types)
-binary_reader.read(:string) #=> 'text'
-binary_reader.read(:byte) #=> 1
+binary_reader.read(:string)  #=> 'text'
+binary_reader.read(:byte)    #=> 1
 binary_reader.read(:boolean) #=> true
 ```
