@@ -125,7 +125,7 @@ class Binary_Reader < Binary
   def read(type = nil)
     type ||= @formats[@index]
     data = case type
-           when TYPES[:byte], :byte, TYPES[:sbyte], :sbyte; read_byte
+           when TYPES[:byte], TYPES[:sbyte], :byte, :sbyte; read_byte
            when TYPES[:boolean], :boolean; read_boolean
            when TYPES[:short], :short; read_short
            when TYPES[:ushort], :ushort; read_ushort
