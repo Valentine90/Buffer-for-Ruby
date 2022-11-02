@@ -53,7 +53,7 @@ class Binary_Writer < Binary
   def to_s
     unless manual_types?
       @binary = [@formats.bytesize] + @formats.bytes + @binary
-      @pack = "#{TYPES[:ushort]}#{TYPES[:byte] * @formats.size}#{@pack}"
+      @pack = "#{TYPES[:ushort]}#{TYPES[:byte]}#{@formats.bytesize}#{@pack}"
     end
     @binary.pack(@pack)
   end
@@ -62,13 +62,13 @@ class Binary_Writer < Binary
 
   def write_int(value, type)
     type = type.is_a?(Symbol) ? type : auto_int_type(value)
-    push(value, type)
+    push(type, value)
     @formats << TYPES[type] unless manual_types?
   end
 
   def auto_int_type(value)
-    if value >= 0 && value <= 255; :byte
-    elsif value >= -128 && value < 0; :sbyte
+    if value >= -128 && value <= 127; :sbyte
+    elsif value > 127 && value <= 255; :byte
     elsif value >= -32_767 && value <= 32_767; :short
     elsif value > 32_767 && value <= 65_535; :ushort
     elsif value >= -2_147_483_647 && value <= 2_147_483_647; :int
@@ -78,25 +78,26 @@ class Binary_Writer < Binary
   end
 
   def write_float(value)
-    push(value, :float)
+    push(:float, value)
     @formats << TYPES[:float] unless manual_types?
   end
   
   def write_boolean(value)
-    push(value ? 1 : 0, :byte)
+    push(:byte, value ? 1 : 0)
     @formats << TYPES[:boolean] unless manual_types?
   end
   
   def write_string(str)
-    push(str.bytesize, :ushort)
-    str.each_byte { |c| push(c, :byte) }
+    push(:ushort, str.bytesize)
+    @binary += str.bytes
+    @pack << "#{TYPES[:byte]}#{str.bytesize}"
     @formats << TYPES[:string] unless manual_types?
   end
-
+  
   def write_date(time)
-    push(time.year, :short)
-    push(time.month, :byte)
-    push(time.day, :byte)
+    push(:short, time.year)
+    push(:byte, time.month)
+    push(:byte, time.day)
     @formats << TYPES[:date] unless manual_types?
   end
 
@@ -104,7 +105,7 @@ class Binary_Writer < Binary
     @manual_types
   end
   
-  def push(value, type)
+  def push(type, value)
     @binary << value
     @pack << TYPES[type]
   end
@@ -129,10 +130,10 @@ class Binary_Reader < Binary
            when TYPES[:boolean], :boolean; read_boolean
            when TYPES[:short], :short; read_short
            when TYPES[:ushort], :ushort; read_ushort
-           when TYPES[:float], :float; shift(4, TYPES[:float])
-           when TYPES[:int], :int; shift(4, TYPES[:int])
-           when TYPES[:uint], :uint; shift(4, TYPES[:uint])
-           when TYPES[:long], :long; shift(8, TYPES[:long])
+           when TYPES[:float], :float; shift(TYPES[:float], 4)
+           when TYPES[:int], :int; shift(TYPES[:int], 4)
+           when TYPES[:uint], :uint; shift(TYPES[:uint], 4)
+           when TYPES[:long], :long; shift(TYPES[:long], 8)
            when TYPES[:string], :string; read_string
            when TYPES[:date], :date; read_date
            end
@@ -151,23 +152,23 @@ class Binary_Reader < Binary
   end
 
   def read_short
-    shift(2, TYPES[:short])
+    shift(TYPES[:short], 2)
   end
 
   def read_ushort
-    shift(2, TYPES[:ushort])
+    shift(TYPES[:ushort], 2)
   end
 
   def read_string
-    size = read_ushort
-    shift(size, "A#{size}")
+    bytesize = read_ushort
+    shift("A#{bytesize}", bytesize)
   end
   
   def read_date
     Time.new(read_short, read_byte, read_byte)
   end
 
-  def shift(n, format)
+  def shift(format, n)
     @bytes.shift(n).pack('C*').unpack1(format)
   end
   
