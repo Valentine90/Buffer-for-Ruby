@@ -128,7 +128,7 @@ class BinaryReader < Binary
     #e não recriada, durante a leitura
     @b_pos = 0
     @f_index = 0
-    @bytes = binary.is_a?(Binary_Writer) ? binary.to_s.bytes : binary.bytes
+    @bytes = binary.is_a?(BinaryWriter) ? binary.to_s.bytes : binary.bytes
     @formats = read_string unless manual_types
   end
 
