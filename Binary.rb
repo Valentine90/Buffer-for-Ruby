@@ -29,9 +29,9 @@ class Binary
 end
 
 #==============================================================================
-# ** Binary_Writer
+# ** BinaryWriter
 #==============================================================================
-class Binary_Writer < Binary
+class BinaryWriter < Binary
 
   def initialize(manual_types = false)
     @manual_types = manual_types
@@ -118,9 +118,9 @@ class Binary_Writer < Binary
 end
 
 #==============================================================================
-# ** Binary_Reader
+# ** BinaryReader
 #==============================================================================
-class Binary_Reader < Binary
+class BinaryReader < Binary
 
   def initialize(binary, manual_types = false)
     # Cria a posição mutável da array, em vez de usar shift no
