@@ -9,7 +9,7 @@
 class Binary
 
   TYPES = {
-    # Integer 8-bit unsigned
+    # Integer 8-bit unsigned.
     :byte => 'C',
     :sbyte => 'c',
     :short => 's',
@@ -18,9 +18,9 @@ class Binary
     :uint => 'I',
     :float => 'f',
     # q representa um número de 64 bits, diferentemente
-    #de l, que representa um número de 32 bits
+    # de l, que representa um número de 32 bits.
     :long => 'q',
-    # Tipos não-oficiais
+    # Tipos não-oficiais.
     :boolean => 'b',
     :string => 'r',
     :date => 't'
@@ -100,7 +100,7 @@ class BinaryWriter < Binary
   end
 
   def concat_formats
-    # Reduz formatos utilizando RegExp quando muitos dados forem escritos no buffer
+    # Reduz formatos utilizando RegExp quando muitos dados forem escritos no buffer.
     @formats.gsub!(/(([a-z])(\2)+)/) { |f| "#{f[0]}#{f.size}" } if @formats.bytesize > 50
     @binary = [@formats.bytesize] + @formats.bytes + @binary
     @pack = "#{TYPES[:ushort]}#{TYPES[:byte]}#{@formats.bytesize}#{@pack}"
@@ -124,8 +124,8 @@ class BinaryReader < Binary
 
   def initialize(binary, manual_types = false)
     # Cria a posição mutável da array, em vez de usar shift no
-    #método unpack, para que a mesma array seja aproveitada,
-    #e não recriada, durante a leitura
+    # método unpack, para que a mesma array seja aproveitada,
+    # e não recriada, durante a leitura.
     @b_pos = 0
     @f_index = 0
     @bytes = binary.is_a?(BinaryWriter) ? binary.to_s.bytes : binary.bytes
