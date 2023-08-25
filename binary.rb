@@ -1,36 +1,30 @@
-#==============================================================================
-# ** Binary
-#------------------------------------------------------------------------------
-#  Esta classe lê e escreve dados binários.
-#------------------------------------------------------------------------------
-#  Autor: Valentine
-#==============================================================================
+# Lê e escreve dados binários.
+#
+# Copyright (c) 2020 Valentine.
 
 class Binary
 
   TYPES = {
     # Integer 8-bit unsigned.
-    :byte => 'C',
-    :sbyte => 'c',
-    :short => 's',
-    :ushort => 'S',
-    :int => 'i',
-    :uint => 'I',
-    :float => 'f',
+    byte: 'C',
+    sbyte: 'c',
+    short: 's',
+    ushort: 'S',
+    int: 'i',
+    uint: 'I',
+    float: 'f',
     # q representa um número de 64 bits, diferentemente
     # de l, que representa um número de 32 bits.
-    :long => 'q',
+    long: 'q',
     # Tipos não-oficiais.
-    :boolean => 'b',
-    :string => 'r',
-    :date => 't'
+    boolean: 'b',
+    string: 'r',
+    date: 't'
   }
   
 end
 
-#==============================================================================
-# ** BinaryWriter
-#==============================================================================
+# Escreve dados binários.
 class BinaryWriter < Binary
 
   def initialize(manual_types = false)
@@ -53,6 +47,7 @@ class BinaryWriter < Binary
   
   def to_s
     concat_formats unless manual_types?
+    
     @binary.pack(@pack)
   end
   
@@ -60,7 +55,9 @@ class BinaryWriter < Binary
 
   def write_int(value, type)
     type = type.is_a?(Symbol) ? type : auto_int_type(value)
+    
     push(type, value)
+    
     @formats << TYPES[type] unless manual_types?
   end
 
@@ -77,18 +74,22 @@ class BinaryWriter < Binary
 
   def write_float(value)
     push(:float, value)
+    
     @formats << TYPES[:float] unless manual_types?
   end
   
   def write_boolean(value)
     push(:byte, value ? 1 : 0)
+    
     @formats << TYPES[:boolean] unless manual_types?
   end
   
   def write_string(str)
     push(:ushort, str.bytesize)
+    
     @binary += str.bytes
     @pack << "#{TYPES[:byte]}#{str.bytesize}"
+    
     @formats << TYPES[:string] unless manual_types?
   end
   
@@ -96,6 +97,7 @@ class BinaryWriter < Binary
     push(:short, time.year)
     push(:byte, time.month)
     push(:byte, time.day)
+    
     @formats << TYPES[:date] unless manual_types?
   end
 
@@ -117,9 +119,7 @@ class BinaryWriter < Binary
   
 end
 
-#==============================================================================
-# ** BinaryReader
-#==============================================================================
+# Lê dados binários.
 class BinaryReader < Binary
 
   def initialize(binary, manual_types = false)
@@ -134,6 +134,7 @@ class BinaryReader < Binary
 
   def read(type = nil)
     type ||= @formats[@f_index]
+
     data = case type
            when TYPES[:byte], :byte; read_byte
            when TYPES[:sbyte], :sbyte; unpack(TYPES[:sbyte], 1)
@@ -147,7 +148,9 @@ class BinaryReader < Binary
            when TYPES[:string], :string; read_string
            when TYPES[:date], :date; read_date
            end
+
     @f_index += 1
+
     data
   end
 
@@ -155,7 +158,9 @@ class BinaryReader < Binary
   
   def read_byte
     result = @bytes[@b_pos]
+    
     @b_pos += 1
+    
     result
   end
   
@@ -173,6 +178,7 @@ class BinaryReader < Binary
 
   def read_string
     size = read_ushort
+    
     unpack("A#{size}", size)
   end
   
@@ -182,7 +188,9 @@ class BinaryReader < Binary
 
   def unpack(format, size)
     result = @bytes[@b_pos, size].pack('C*').unpack1(format)
+    
     @b_pos += size
+    
     result
   end
   
