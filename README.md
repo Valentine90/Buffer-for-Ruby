@@ -11,8 +11,7 @@ binary_writer.write(true)
 ```
 Or:
 ```Ruby
-manual_types = true
-binary_writer = BinaryWriter.new(manual_types)
+binary_writer = BinaryWriter.new(manual_types: true)
 binary_writer.write(:string, 'text')
 binary_writer.write(:byte, 1)
 binary_writer.write(:boolean, true)
@@ -27,8 +26,7 @@ binary_reader.read #=> true
 ```
 Or:
 ```Ruby
-manual_types = true
-binary_reader = BinaryReader.new(binary_writer, manual_types)
+binary_reader = BinaryReader.new(binary_writer, manual_types: true)
 binary_reader.read(:string)  #=> 'text'
 binary_reader.read(:byte)    #=> 1
 binary_reader.read(:boolean) #=> true
