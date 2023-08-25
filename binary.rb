@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Lê e escreve dados binários.
 #
 # Copyright (c) 2020 Valentine.
